@@ -22,10 +22,8 @@ namespace Bank_Account
                 {
                     throw new ArithmeticException("ID must be Positive and Greater than 0");
                 }
-                else
-                {
-                    id = value;
-                }
+                 id = value;
+                
           }
         }
         public string OwnerName 
@@ -33,14 +31,11 @@ namespace Bank_Account
             get { return ownerName; } 
             set
             {
-                if (ownerName == value)
+                if (string.IsNullOrEmpty(value))
                 {
-                    ownerName = value;
+                    throw new NullReferenceException("Name cannot be Empty or Null"); 
                 }
-                else
-                {
-                    throw new NullReferenceException("Name cannot be Empty or Null");
-                }
+                ownerName = value;
             } 
         }
         public double Balance
@@ -62,39 +57,34 @@ namespace Bank_Account
         }
         public BankAccount(int id, string ownerName, double initialBalance) 
         {
-            this.id = id;
-            this.ownerName = ownerName;
+            ID = id;
+            OwnerName = ownerName;
             if (initialBalance < 0)
             {
-                throw new ArithmeticException("Initial Balance must be greater than 0");
-            }else
-            {
-                initialBalance = 0;
+                throw new ArgumentException("Initial Balance must be greater than 0");
             }
+            balance = initialBalance;
+            
         }
         public void Deposit(double amount)
         {
-            if (amount < 0)
+            if (amount <= 0)
             {
-                throw new ArithmeticException("\n!!! Amount must be greater than 0 !!!");
-            }
-            else
-            {
+                throw new ArgumentException("\n!!! Amount must be greater than 0 !!!");
+            }            
                 balance += amount;
                 Console.WriteLine($"${amount} has been successfully deposited into your account. \nYour current balance is now ${balance}.\n");
-            }
+            
         }
         public void Withdraw(double amount)
         { 
-            if (amount < 0 || amount > balance)
+            if (amount <= 0 || amount > balance)
             {
                 throw new ArithmeticException("\n!!! Amount must be greater than 0 and less than your current balance !!!");
-            }
-            else
-            {
+            }                     
                 balance -= amount;
                 Console.WriteLine($"${amount} has been withdrawn from your account. \nYour current balance is now ${balance}.\n");
-            }
+            
         }
         public void TranferFunds(BankAccount recipient, double amount)
         {
@@ -133,16 +123,13 @@ namespace Bank_Account
                     Console.WriteLine(e.Message);
                 }
             }
-                if (recipient != null)
+                if (recipient == null)
                 {
-                    Withdraw(amount);
-                    recipient.Deposit(amount);
+                    throw new ArgumentException("Add a recipient");
                 }
-                else
-                {
-                    throw new Exception("Recipient can not be empty");
-                }
-            
+              
+            Withdraw(amount);
+            recipient.Deposit(amount);
         }
         public string DisplayAccountInfo()
         {
